@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 typedef struct node Node;
 
 struct node
@@ -12,6 +13,7 @@ struct node
 void sort(Node *head);//bubble sort
 void printlist(Node* head);//print a list
 Node *appendlist(Node *head1,Node *head2);//append two non-decreasing lists and return a non-decreasing list.
+void freelist(Node *head);
 
 int main(void)
 {
@@ -25,32 +27,35 @@ int main(void)
     sort(finalhead);
     //
     printlist(finalhead);
+    free(finalhead);
     return 0;
 }
 
 Node *creatlist(void)
 {
     Node *head=(Node *)malloc(sizeof(Node));
-    char buf[200];//buffer
+    head->next=NULL;
+    char buf[200]={'\0'};//buffer
     Node *ptmp=NULL;//creat list member
     Node *pprev=head;//the pervious node
     char *toksto;//strtok_r
     char *stok;//Store the address returned by strtok_r
-    int i;
     //
     printf("Please input a series of no-decreasing numbers separated by spaces:\n");
     fgets(buf,sizeof(buf),stdin);
-    for(i=0;buf[i]!='\n';++i);//exclude the '\n' readed by fgets.
-    buf[i]='\0';
-    stok=strtok_r(buf," ",&toksto);
+    stok=strtok_r(buf," \n",&toksto);
     while(stok)
     {
-	ptmp=(Node *) malloc(sizeof(Node));
+        if(!(ptmp=(Node *) malloc(sizeof(Node))))
+	{
+	    printf("Memory exhausted..");
+	    exit(0);
+	}
 	pprev->next=ptmp;//append next node to current list
 	ptmp->next=NULL;//end of new list
 	ptmp->num=atoi(stok);//if the fitst chr is not a number then there will be 0 instead.
 	pprev=ptmp;//make the current one becone the pervious one in the next loop.
-	stok=strtok_r(NULL," ",&toksto);
+	stok=strtok_r(NULL," \n",&toksto);
     }
     sort(head);
     return head;
@@ -66,6 +71,8 @@ Node *appendlist(Node *head1, Node *head2)
 
 void printlist(Node *head)
 {
+    if(head==NULL||head->next==NULL)
+	return;
     for(Node *p=head->next;p!=NULL;p=p->next)
 	printf("%d ",p->num);
     printf("\n");
@@ -74,16 +81,39 @@ void printlist(Node *head)
 void sort(Node *head)
 {
     int tmp;
-    for(Node *p=head->next;p->next!=NULL;p=p->next)
+    if(head==NULL||head->next==NULL)
+	return;
+    Node *p=NULL,*q=NULL;
+    Node *tail=NULL;
+    for(tail=head;tail->next;tail=tail->next);
+    bool nordered=true;
+    while(nordered)
     {
-	for(Node *q=p;q->next!=NULL;q=q->next)//bubble sort
+	nordered=false;
+	p=head->next;
+	while(p!=tail)
 	{
-	    if(q->num>q->next->num)
+	    q=p;
+	    if(p->num>p->next->num)
 	    {
-		tmp=q->num;
-		q->num=q->next->num;
-		q->next->num=tmp;
+		nordered=true;
+		tmp=p->num;
+		p->num=p->next->num;
+		p->next->num=tmp;
 	    }
+	    p=p->next;
 	}
+	tail=q;
+    }
+}
+
+void freelist(Node *head)
+{
+    Node *p=NULL;
+    while(head)
+    {
+	p=head;
+	head=head->next;
+	free(p);
     }
 }

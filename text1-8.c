@@ -32,7 +32,11 @@ int main(void)
         for(int i=0;buffer[i]!='\n';++i)
             if((buffer[i]>'9'||buffer[i]<'0')&&buffer[i]!='.')
                 goto out;
-        q=(numbers*) malloc(sizeof(numbers)); //the .. nod
+        if(!(q=(numbers*) malloc(sizeof(numbers))))
+	{
+	    printf("Memory exhausetd..");
+	    exit(0);
+	}
         p->next=q;
         q->next=NULL;
         p=q;
@@ -40,12 +44,15 @@ int main(void)
         count++;
     }
 out:
-    q=head;
-    while(q->next!=NULL)
+    q=head->next;
+    free(head);
+    while(q)
     {
-        q=q->next;
         sum+=q->num;
         printf("\n%f",q->num);
+	p=q;
+        q=q->next;
+	free(p);
     }
     printf("\nSum is %f\nAverage is %f",sum,(float)(sum/count));
     return 0;
