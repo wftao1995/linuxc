@@ -10,7 +10,7 @@ struct node
     struct node *next;
 };
 
-void sort(Node *head);//bubble sort
+void sort(Node *head, Node *tail);
 void printlist(Node* head);//print a list
 Node *appendlist(Node *head1,Node *head2);//append two non-decreasing lists and return a non-decreasing list.
 void freelist(Node *head);
@@ -24,7 +24,7 @@ int main(void)
     head2=creatlist();
     finalhead=appendlist(head1,head2);
     printlist(finalhead);
-    sort(finalhead);
+    sort(finalhead,NULL);
     //
     printlist(finalhead);
     free(finalhead);
@@ -57,7 +57,7 @@ Node *creatlist(void)
 	pprev=ptmp;//make the current one becone the pervious one in the next loop.
 	stok=strtok_r(NULL," \n",&toksto);
     }
-    sort(head);
+    sort(head,NULL);
     return head;
 }
 
@@ -78,35 +78,6 @@ void printlist(Node *head)
     printf("\n");
 }
 
-void sort(Node *head)
-{
-    int tmp;
-    if(head==NULL||head->next==NULL)
-	return;
-    Node *p=NULL,*q=NULL;
-    Node *tail=NULL;
-    for(tail=head;tail->next;tail=tail->next);
-    bool nordered=true;
-    while(nordered)
-    {
-	nordered=false;
-	p=head->next;
-	while(p!=tail)
-	{
-	    q=p;
-	    if(p->num>p->next->num)
-	    {
-		nordered=true;
-		tmp=p->num;
-		p->num=p->next->num;
-		p->next->num=tmp;
-	    }
-	    p=p->next;
-	}
-	tail=q;
-    }
-}
-
 void freelist(Node *head)
 {
     Node *p=NULL;
@@ -116,4 +87,29 @@ void freelist(Node *head)
 	head=head->next;
 	free(p);
     }
+}
+
+void sort(Node *head, Node *tail)
+{
+    if(head==NULL||head->next==tail||head->next->next==tail)
+	return;
+    
+    Node *mid=head->next;
+    Node *left=head, *right=mid;
+    Node *p=mid->next;
+    int key=mid->num;
+    
+    while(p!=tail)
+    {
+	if(p->num<key)
+	    left=left->next=p;
+	else
+	    right=right->next=p;
+	p=p->next;
+    }
+    left->next=mid;
+    right->next=tail;
+    
+    sort(head,mid);
+    sort(mid,tail);
 }
