@@ -21,10 +21,10 @@ int main(void)
     {
         printf("Please input a man's name and his phone number\n");
         printf("Please use enter to separate name and phone:\n");
-        printf("Please enter $%%$ when you enter the name to end the input\n");
+        printf("Please enter %%%%EOF when you enter the name to end the input\n");
         fgets(members[i].name,sizeof(man),stdin);
         fgets(members[i].phone,sizeof(man),stdin);
-        if(!strcmp(members[i].name,"$%$\n"))
+        if(!strcmp(members[i].name,"%%EOF\n"))
             break;
         count++;
     }

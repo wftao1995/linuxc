@@ -33,10 +33,10 @@ int main(void)
             if((buffer[i]>'9'||buffer[i]<'0')&&buffer[i]!='.')
                 goto out;
         if(!(q=(numbers*) malloc(sizeof(numbers))))
-	{
-	    printf("Memory exhausetd..");
-	    exit(0);
-	}
+        {
+	        printf("Memory exhausetd..");
+	        exit(0);
+	    }
         p->next=q;
         q->next=NULL;
         p=q;
@@ -50,9 +50,9 @@ out:
     {
         sum+=q->num;
         printf("\n%f",q->num);
-	p=q;
+    	p=q;
         q=q->next;
-	free(p);
+        free(p);
     }
     printf("\nSum is %f\nAverage is %f",sum,(float)(sum/count));
     return 0;
